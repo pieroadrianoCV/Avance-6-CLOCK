@@ -1,2 +1,2 @@
-# BufferManager2.0
-Implementación Buffer Manager - Base de Datos II - Version Modificada
+# BufferManager
+Implementación Buffer Manager - Base de Datos II - Algoritmo LRU y CLOCK.
