@@ -266,8 +266,8 @@ void PageTable::aplicarCLOCK(int numPagina, int numFrameAignorar, bool &eliminar
     cout << "------------------Aplicando Algoritmo CLOCK-----------------" << endl;
     cout << " La manesilla apunta actualmente al frame " << clockHand << endl;
     while (true) {
-        int numColumnaRefBit = 3; // Columna donde está el bit de referencia
-        int numColumnaDirtyBit = 1; // Columna donde está el dirty bit
+        int numColumnaRefBit = 3; 
+        int numColumnaDirtyBit = 1; 
 
         if (this->matrizPageTableLRU[clockHand][numColumnaRefBit] == 0) {
             numPaginaEliminada = this->matrizPageTableLRU[clockHand][0];
