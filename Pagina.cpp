@@ -16,55 +16,67 @@ bool isNumber(const std::string &s) {
 }
 
 void Pagina::recogerRegistros(int numPagina) {
+    cout << "muere en recoger registros" << endl;
     string numPaginaString = to_string(numPagina);
     string nameBloque = "Bloque";
     rutaCompleta = "../Bloques/" + nameBloque + numPaginaString + ".txt";
     ifstream fileReadBloques(rutaCompleta);
-    if (!fileReadBloques.is_open()) {
-        cout << "Error, no se pudo abrir el archivo." << endl;
-    }
-    else {
-        cout << "Exito, si se pudo abrir el archivo." << endl;
-        string lineaDeRegistroAux;
-        string valor;
     
-        this->vectorRegistrosEnPagina.clear();
-
-        cout << "Longitud de string: " << endl;
-        cin >> tamanioString;
-        
-        while (getline(fileReadBloques,lineaDeRegistroAux)) {
-            string linea_registro;
-            stringstream ss(lineaDeRegistroAux);
-            bool primerValor = true;
-            
-            while (getline(ss, valor, ',')) {
-                if (!primerValor) {
-                    linea_registro += ',';
-                }
-                else {
-                    primerValor = false;
-                }
-                
-                int peso = valor.size();
-                
-                if (isNumber(valor)) {
-                    linea_registro += valor;
-                    continue;
-                }
-                else {
-                    while (peso < tamanioString) {
-                        valor += ' ';
-                        peso += 1;
-                    }
-                    linea_registro += valor;
-                }
-            }
-            this->vectorRegistrosEnPagina.push_back(linea_registro);
-        }
-        cout << "Recogida de datos terminado." << endl;
+    if (!fileReadBloques.is_open()) {
+        cerr << "Error, no se pudo abrir el archivo: " << rutaCompleta << endl;
+        return;
     }
+    
+    cout << "Exito, si se pudo abrir el archivo." << endl;
+    
+    cout << "Longitud de string: ";
+    int tamanioString;
+    while (!(cin >> tamanioString) || tamanioString <= 0) {
+        cout << "Por favor, introduce un número válido mayor que 0: ";
+        cin.clear();
+        cin.ignore();
+    }
+
+    string lineaDeRegistroAux;
+    while (getline(fileReadBloques, lineaDeRegistroAux)) {
+        if (lineaDeRegistroAux.empty()) {
+            cout << "Línea vacía, omitiendo." << endl;
+            continue;
+        }
+        
+        cout << "Procesando línea: " << lineaDeRegistroAux << endl;
+        
+        string linea_registro;
+        stringstream ss(lineaDeRegistroAux);
+        string valor;
+        bool primerValor = true;
+        
+        while (getline(ss, valor, ',')) {
+            if (!primerValor) {
+                linea_registro += ',';
+            }
+            else {
+                primerValor = false;
+            }
+            int peso = valor.size();
+            
+            if (isNumber(valor)) {
+                linea_registro += valor;
+            } else {
+                while (peso < tamanioString) {
+                    valor += ' ';
+                    peso += 1;
+                }
+                linea_registro += valor;
+            }
+        }
+        
+        this->vectorRegistrosEnPagina.push_back(linea_registro);
+    }
+    
+    cout << "Recogida de datos terminado." << endl;
 }
+
 
 void Pagina::mostrarContenidoDePagina() {
     for (size_t i =0 ; i < this->vectorRegistrosEnPagina.size(); i++) {

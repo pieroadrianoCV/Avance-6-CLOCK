@@ -50,7 +50,7 @@ void BufferManager::obtenerUnaPagina(int numPagina) {
         cout << "Mandando a agregar la nueva Pagina." << endl;
         int numFrameDePagina = this->pageTable.getNumFrameDeUnaPagina(numPagina);
 
-        cout << "Ingresando Página al BufferPoll dentro vector de Frames...." << endl;
+        cout << "Ingresando Página al BufferPoll dentro vector de Frames(Sin escritura)...." << endl;
         this->bufferPool.agregarNuevaPaginaBufferPool(numFrameDePagina,numPagina);
         this->bufferPool.mostrarFramePagina(numFrameDePagina);
     }
@@ -67,7 +67,7 @@ void BufferManager::obtenerUnaPagina(int numPagina) {
         int numPaginaEliminada=stoi(paginaEliminada);
         
 
-        cout << "Ingresando Página al BufferPoll dentro vector de Frames...." << endl;
+        cout << "Ingresando Página al BufferPoll dentro vector de Frames(Con escritura)...." << endl;
         this->bufferPool.agregarContenidoPaginaAbloque(numFrameDePaginaEliminada, numPaginaEliminada);
         this->bufferPool.agregarNuevaPaginaBufferPool(numFrameDePagina,numPagina);
         this->bufferPool.mostrarFramePagina(numFrameDePagina);
