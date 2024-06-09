@@ -143,17 +143,22 @@ void PageTable::aumentarLastUsedDePagina(int numPagina) {
 */
 void PageTable::aumentarRefBitDePagina(int numPagina) {
     int numFilaElegida;
-    if (this->verificarExistenciaDePagina(numPagina) == true) {
+    if (this->verificarExistenciaDePagina(numPagina)) 
+    {
         int j = 0;
         for (int i = 0; i < this->columnaFrameIdSize; i++) {
             if (this->matrizPageTableLRU[i][j] == numPagina) {
                 numFilaElegida = i;
+                break; 
             }
         }
         //int numColumnaLastUsed = 3;
-        this->matrizPageTableLRU[numFilaElegida][3] = this->matrizPageTableLRU[numFilaElegida][3] + 1;
+        if (this->matrizPageTableLRU[numFilaElegida][3] < 1) {
+            this->matrizPageTableLRU[numFilaElegida][3]++;
+        }
     }
 }
+
 /*
 void PageTable::aumentarLastUsedDeTodasLasDemasPaginas(int numFrameAignorar) {
     cout << "Actualizando la Page Table." << endl;
@@ -219,39 +224,85 @@ void PageTable::actualizarInfoDePageTableSolictandoNuevaPagina(int numPaginaActu
     cout << "Datos de Page Table actualizado" << endl;
 }
 
-
+/*
 void PageTable::aplicarCLOCK(int numPagina, int numFrameAignorar, bool &eliminarPageSinEscrituraEnDisco, bool &eliminarPageConEscrituraEnDisco, int &numPaginaEliminada)
 {
     cout << "--------------------- Estrategia CLOCK ------------------" << endl;
     int numColRefBit = 3;
-    int numColPinCount = 2;
-    int numColDirtyBit = 1;
-    int numColPageId = 0;
+    //int numColPinCount = 2;
+    //int numColDirtyBit = 1;
+    //int numColPageId = 0;
 
-    /* Manecilla del Reloj */
+    // Manecilla del Reloj 
     cout << "ClockHand apunta actualmente a la pagina " << clockHand << endl;
+    int numFilas = this->matrizPageTableLRU.size();
+    int numColumnas = this->matrizPageTableLRU[0].size();
 
-    if (clockHand == 4)
+    if (clockHand >= numFilas)
     {
         clockHand = 0;
     }
 
-    for (int i = 0; i < this->columnaFrameIdSize; i++)
+    for (int i = 0; i < numFilas; i++)
     {
-        if (this->matrizPageTableLRU[columnaFrameIdSize][numColRefBit] == 1) 
+        if (this->matrizPageTableLRU[i][numColRefBit] == 1) 
         { 
-            this->matrizPageTableLRU[clockHand][numColRefBit] = 0;
-            cout << "La pagina " << columnaFrameIdSize << " su Ref Bit fue cambiado a 0." << endl;
-            clockHand += 1;
+            this->matrizPageTableLRU[i][numColRefBit] = 0;
+            cout << "La pagina " << i << " su Ref Bit fue cambiado a 0." << endl;
+            clockHand = (clockHand + 1) % this->columnaFrameIdSize; // Evita que clockHand se salga de rango
         }
-        else if (this->matrizPageTableLRU[columnaFrameIdSize][numColRefBit] == 0)
+        else if (this->matrizPageTableLRU[i][numColRefBit] == 0)
         {
-            actualizarInformacionDePaginaEliminada(clockHand, numPagina);
-            clockHand += 1;
+            actualizarInformacionDePaginaEliminada(i, numPagina);
+            clockHand = (clockHand + 1) % this->columnaFrameIdSize; // Evita que clockHand se salga de rango
             cout << "ClockHand pasa a apuntar a pagina " << clockHand << endl;
             break;
         }
     }
+}
+*/
+
+void PageTable::aplicarCLOCK(int numPagina, int numFrameAignorar, bool &eliminarPageSinEscrituraEnDisco, bool &eliminarPageConEscrituraEnDisco, int &numPaginaEliminada) {
+    cout << "------------------Aplicando Algoritmo CLOCK-----------------" << endl;
+    cout << " La manesilla apunta actualmente al frame " << clockHand << endl;
+    while (true) {
+        int numColumnaRefBit = 3; // Columna donde está el bit de referencia
+        int numColumnaDirtyBit = 1; // Columna donde está el dirty bit
+
+        if (this->matrizPageTableLRU[clockHand][numColumnaRefBit] == 0) {
+            numPaginaEliminada = this->matrizPageTableLRU[clockHand][0];
+            cout << "Página encontrada para reemplazo: " << numPaginaEliminada << endl;
+
+            // Verificar si se requiere escribir en disco
+            if (this->matrizPageTableLRU[clockHand][numColumnaDirtyBit] == 0) {
+                eliminarPageSinEscrituraEnDisco = true;
+                eliminarPageConEscrituraEnDisco = false;
+            } else {
+                eliminarPageSinEscrituraEnDisco = false;
+                eliminarPageConEscrituraEnDisco = true;
+            }
+
+            this->matrizPageTableLRU[clockHand][0] = numPagina; // Asignar la nueva página
+            this->matrizPageTableLRU[clockHand][numColumnaDirtyBit] = 0; // Resetear el dirty bit
+            this->matrizPageTableLRU[clockHand][numColumnaRefBit] = 1; // Establecer el ref bit a 1
+            this->matrizPageTableLRU[clockHand][2] = 1; // Pin count a 1
+
+            clockHand = (clockHand + 1) % this->columnaFrameIdSize; // Mover la manecilla
+            break;
+        } 
+        else if (this->verificarExistenciaDePagina(numPagina) == true)
+        {
+            this->matrizPageTableLRU[numPagina][numColumnaRefBit] = 1;
+            cout << "  La manesilla no se mueve, apunta al frame " << clockHand << endl;
+        }
+        else {
+            // Poner el bit de referencia a 0 y mover la manecilla
+            this->matrizPageTableLRU[clockHand][numColumnaRefBit] = 0;
+            clockHand = (clockHand + 1) % this->columnaFrameIdSize;
+        }
+        
+    }
+    cout << " (ACTUALIZACION) La manesilla apunta ahora al frame " << clockHand << endl;
 }
 
 void PageTable::aplicarClockConCondicionPinCount(int numPagina, int numFrameAignorar, bool &eliminarPageSinEscrituraEnDisco, bool &eliminarPageConEscrituraEnDisco, int &numPaginaEliminada)
@@ -277,14 +328,16 @@ void PageTable::aplicarClockConCondicionPinCount(int numPagina, int numFrameAign
             cout << "Dirty Bit = 1" << endl;
             cout << "Se eliminará la Pagina, con escritura en Disco." << endl;
             actualizarInformacionDePaginaEliminada(clockHand, numPagina);
+            aplicarCLOCK(numPagina, INT16_MAX , eliminarPageSinEscrituraEnDisco, eliminarPageConEscrituraEnDisco, numPaginaEliminada);
             numPaginaEliminada=clockHand;
             eliminarPageConEscrituraEnDisco = true;
             eliminarPageSinEscrituraEnDisco = false;
+            
         }  
     }
     else {
         cout << "Pin Count no esta libre." << endl;
-        aplicarCLOCK(numPagina, INT16_MAX, eliminarPageSinEscrituraEnDisco, eliminarPageConEscrituraEnDisco, numPaginaEliminada);
+        
     }
 }
 /*
@@ -401,6 +454,7 @@ bool PageTable::verificarFrameLlenos() {
 
 
 void PageTable::actualizarInformacionDePaginaEliminada(int numPaginaEliminar, int nuevaPaginaIngresar) {
+    cout << "-------------------actualizarInformacionDePaginaEliminada------------------" << endl;
     int numFilaElegida;
     if (this->verificarExistenciaDePagina(numPaginaEliminar) == true) {
         int j = 0;
