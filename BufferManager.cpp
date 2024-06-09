@@ -11,7 +11,8 @@ void BufferManager::crearBufferPoolSegunNumFrames(int numFrames) {
     this->pageTable.columnPageIdSize = 0;
     this->pageTable.columnaDirtyIdSize = 0;
     this->pageTable.columnaPinCountSize = 0;
-    this->pageTable.columnaLastUsedSize = 0;
+    //this->pageTable.columnaLastUsedSize = 0;
+    this->pageTable.columnaRefBitSize = 0;
 
     cout << "Inicializando la Page Table." << endl;
     this->pageTable.matrizPageTableLRU.resize(numFrames);
