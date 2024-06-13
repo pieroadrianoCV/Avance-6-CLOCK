@@ -6,7 +6,6 @@ BufferPool::~BufferPool() {};
 
 void BufferPool::agregarNuevaPaginaBufferPool(int numFrame, int numPagina) {
     if (this->vectorFramesBufferPool[numFrame].paginaEnFrame.vectorRegistrosEnPagina.empty()) {
-        cout << "muere en if " << endl;
         this->vectorFramesBufferPool[numFrame].leerDatosEnPaginaDeFrame(numPagina);
     }
     else {

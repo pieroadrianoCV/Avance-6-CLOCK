@@ -22,7 +22,7 @@ void menu() {
     int opcion = 0;
     int numPagina;
     int numFrame;
-    while (opcion!=6) {
+    while (opcion!=7) {
         cout << endl;
         cout << "------- Menú Principal Programa Buffer Manager -------" << endl;
         cout << "1. Crear Buffer Pool" << endl;
@@ -30,7 +30,7 @@ void menu() {
         cout << "3. Mostrar Page Table" << endl;
         cout << "4. Mostrar Una Página" << endl;
         cout << "5. Liberar uso de Página" << endl;
-        cout << "6. Unpinnear pagina" << endl;
+        cout << "6. Unpinnear Una Página" << endl;
         cout << "7. Salir del programa principal" << endl;
         cout << "Ingrese el numero de opcion" << endl;
         cin >> opcion;

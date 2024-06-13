@@ -16,10 +16,9 @@ bool isNumber(const std::string &s) {
 }
 
 void Pagina::recogerRegistros(int numPagina) {
-    cout << "muere en recoger registros" << endl;
     string numPaginaString = to_string(numPagina);
     string nameBloque = "Bloque";
-    rutaCompleta = "../Bloques/" + nameBloque + numPaginaString + ".txt";
+    rutaCompleta = "./Bloques/" + nameBloque + numPaginaString + ".txt";
     ifstream fileReadBloques(rutaCompleta);
     
     if (!fileReadBloques.is_open()) {
@@ -31,7 +30,8 @@ void Pagina::recogerRegistros(int numPagina) {
     
     cout << "Longitud de string: ";
     int tamanioString;
-    while (!(cin >> tamanioString) || tamanioString <= 0) {
+
+    while (!(cin >> tamanioString) || tamanioString <= 0 ) {
         cout << "Por favor, introduce un número válido mayor que 0: ";
         cin.clear();
         cin.ignore();
