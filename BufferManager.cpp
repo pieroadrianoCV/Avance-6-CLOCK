@@ -13,6 +13,7 @@ void BufferManager::crearBufferPoolSegunNumFrames(int numFrames) {
     this->pageTable.columnaPinCountSize = 0;
     //this->pageTable.columnaLastUsedSize = 0;
     this->pageTable.columnaRefBitSize = 0;
+    this->pageTable.columnaPinnedSize = 0;
 
     cout << "Inicializando la Page Table." << endl;
     this->pageTable.matrizPageTableLRU.resize(numFrames);
@@ -85,6 +86,21 @@ void BufferManager::obtenerUnaPagina(int numPagina) {
         this->bufferPool.agregarNuevaPaginaBufferPool(numFrameDePagina,numPagina);
         this->bufferPool.mostrarFramePagina(numFrameDePagina);
     }
+    
+    char opcionPinned;
+    cout << "Desea pinnear pagina? (S/N) " << endl;
+    cin >> opcionPinned;
+
+    if (opcionPinned == 'S' || opcionPinned == 's')
+    {
+        this->pageTable.pinnearPagina(numPagina);
+    }
+    else if (opcionPinned == 'N' || opcionPinned == 'n')
+    {
+        cout << "No se pinneó ninguna pagina" << endl;
+    }
+    
+    
 }
 
 void BufferManager::mostrarUnaPagina(int numPagina) {
@@ -107,4 +123,8 @@ void BufferManager::mostrarPageTAble() {
 
 void BufferManager::dejarDeUsarUnaPagina(int numPagina) {
     this->pageTable.descontarPinCountApagina(numPagina);
+}
+
+void BufferManager::liberarPinnedPagina(int numPagina) {
+    this->pageTable.unpinnearPagina(numPagina);
 }

@@ -25,7 +25,10 @@ class PageTable{
         string nameColumnaRefBit = "Ref Bit";
         int columnaRefBitSize;
 
-        int numColumnasEnPageTable = 4;
+        string nameColumnaPinned = "Pinned";
+        int columnaPinnedSize;
+
+        int numColumnasEnPageTable = 5;
         vector<vector<int>> matrizPageTableLRU;
     public:
         PageTable();
@@ -42,7 +45,9 @@ class PageTable{
         void actualizarInfoDePageTableSolictandoNuevaPagina(int numPaginaActualizar, int numFilaFrameId);
         //void aumentarLastUsedDeTodasLasDemasPaginas(int numFrameAignorar);
         void aplicarCLOCK(int numPagina, int numFrameAignorar, bool &eliminarPageSinEscrituraEnDisco, bool &eliminarPageConEscrituraEnDisco, int &numPaginaEliminada);
-        void aplicarClockConCondicionPinCount(int numPagina, int numFrameAignorar, bool &eliminarPageSinEscrituraEnDisco, bool &eliminarPageConEscrituraEnDisco, int &numPaginaEliminada);
+        void aplicarClockConCondicionPinned(int numPagina, int numFrameAignorar, bool &eliminarPageSinEscrituraEnDisco, bool &eliminarPageConEscrituraEnDisco, int &numPaginaEliminada);
+        void pinnearPagina(int numPagina);
+        void unpinnearPagina(int numPagina);
         //void aplicarLRU(int numPagina, int numFrameAignorar, bool &eliminarPageSinEscrituraEnDisco, bool &eliminarPageConEscrituraEnDisco, int &numPaginaEliminada);
         string analizarPageTableParaAgregarPagina(int numPagina);
         bool verificarFrameLlenos();

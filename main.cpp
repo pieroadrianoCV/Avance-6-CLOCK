@@ -30,7 +30,8 @@ void menu() {
         cout << "3. Mostrar Page Table" << endl;
         cout << "4. Mostrar Una Página" << endl;
         cout << "5. Liberar uso de Página" << endl;
-        cout << "6. Salir del programa principal" << endl;
+        cout << "6. Unpinnear pagina" << endl;
+        cout << "7. Salir del programa principal" << endl;
         cout << "Ingrese el numero de opcion" << endl;
         cin >> opcion;
 
@@ -42,6 +43,7 @@ void menu() {
                 cout << "Ingrese el numero de pagina que desea OBTENER (Modo Prueba 1 - 6): "<< endl;
                 cin >> numPagina;        
                 bufferManagerPrincipal.obtenerUnaPagina(numPagina);
+                
                 break;
             case 3:
                 bufferManagerPrincipal.mostrarPageTAble();
@@ -68,9 +70,17 @@ void menu() {
                 }
                 break;
             case 5:
-                cout<<"Ingrese el numero de la pagina a liberar (descontar PinCount)"<<endl;
-                cin>>numPagina;
+                cout << "Ingrese el numero de la pagina a liberar (descontar PinCount)"<<endl;
+                cin >> numPagina;
                 bufferManagerPrincipal.pageTable.descontarPinCountApagina(numPagina);
+                break;
+            case 6:
+                cout << "Ingrese Pagina a Despinnear " << endl;
+                cin >> numPagina;
+                bufferManagerPrincipal.pageTable.unpinnearPagina(numPagina);
+                break;
+            case 7:
+                cout << "Saliendo del programa..." << endl;
                 break;
             default:
                 break;

@@ -9,7 +9,7 @@ int clockHand = 0;
 void PageTable::mostrarPageTableLRU() {
     int numFilas = this->matrizPageTableLRU.size();
     int numColumas = this->numColumnasEnPageTable;
-    cout << "Frame id \t PageId \t DirtyBit \t Pin Count \t Ref Bit" << endl;
+    cout << "Frame id \t PageId \t DirtyBit \t Pin Count \t Ref Bit \t Pinned" << endl;
     for (int i = 0; i < numFilas; i++) {
         cout << i << "\t\t";
         for (int j = 0; j < numColumas; j++) {
@@ -212,7 +212,7 @@ void PageTable::actualizarInfoDePageTableSolictandoNuevaPagina(int numPaginaActu
             //this->renovarLastUsedDePagina(numPaginaActualizar);
             cout << "Frame Id: " << numFilaFrameId <<endl;
             cout << "Aumento dado en LastUsed." << endl;
-            cout << "Agregando +1 a Last Used de todos las demás Paginas" << endl;
+            //cout << "Agregando +1 a Last Used de todos las demás Paginas" << endl;
             //int numFrameAignorar = this->getNumFrameDeUnaPagina(numPaginaActualizar);
             //this->aumentarLastUsedDeTodasLasDemasPaginas(numFrameAignorar);
             //this->aumentarLastUsedDeTodasLasDemasPaginas(numFrameAignorar);
@@ -313,17 +313,17 @@ void PageTable::aplicarCLOCK(int numPagina, int numFrameAignorar, bool &eliminar
 }
 */
 
-void PageTable::aplicarClockConCondicionPinCount(int numPagina, int numFrameAignorar, bool &eliminarPageSinEscrituraEnDisco, bool &eliminarPageConEscrituraEnDisco, int &numPaginaEliminada)
+void PageTable::aplicarClockConCondicionPinned(int numPagina, int numFrameAignorar, bool &eliminarPageSinEscrituraEnDisco, bool &eliminarPageConEscrituraEnDisco, int &numPaginaEliminada)
 {
     int numColRefBit = 3;
-    int numColPinCount = 2;
+    int numColPinned = 4;
     int numColDirtyBit = 1;
     int numColPageId = 0;
 
     cout << "Revisando Pin Count" << endl;
 
-    if (this->matrizPageTableLRU[clockHand][numColPinCount] == 0) {
-        cout << "Pin Count esta libre" << endl;
+    if (this->matrizPageTableLRU[clockHand][numColPinned] == 0) {
+        cout << "Pagina unpinned" << endl;
         cout << "Antes de eliminar, revisaremos el Dirty Bit" << endl;
         if (this->matrizPageTableLRU[clockHand][numColDirtyBit] == 0) {
             cout << "Dirty Bit = 0" << endl;
@@ -344,7 +344,50 @@ void PageTable::aplicarClockConCondicionPinCount(int numPagina, int numFrameAign
         }  
     }
     else {
-        cout << "Pin Count no esta libre." << endl;
+        cout << "Pagina pinned" << endl;
+    }
+}
+
+void PageTable::pinnearPagina(int numPagina) {
+    cout << "-------------pinnearPagina--------------" << endl;
+    int numFilaElegida;
+    if (this->verificarExistenciaDePagina(numPagina)) 
+    {
+        int j = 0;
+        for (int i = 0; i < this->columnaPinnedSize; i++) {
+            if (this->matrizPageTableLRU[i][j] == numPagina) {
+                numFilaElegida = i;
+                break; 
+            }
+        }
+        //int numColumnaLastUsed = 3;
+        if (this->matrizPageTableLRU[numFilaElegida][4] == 0) {
+            this->matrizPageTableLRU[numFilaElegida][4] = 1;
+        }
+        else {
+            cout << "Pagina ya esta pinneada" << endl;
+        }
+    }
+    else
+    {
+        cout << "Pagina no existe" << endl;
+    }
+}
+
+
+void PageTable::unpinnearPagina(int numPagina) {
+    int numFilaElegida;
+    if (this->verificarExistenciaDePagina(numPagina) == true) {
+        int j = 0;
+        for (int i = 0; i < this->columnaPinnedSize; i++) {
+            if (this->matrizPageTableLRU[i][j] == numPagina) {
+                cout << i << endl;
+                numFilaElegida = i;
+            }
+        }
+        int numColumnaPinned = 4;
+        this->matrizPageTableLRU[numFilaElegida][numColumnaPinned] = this->matrizPageTableLRU[numFilaElegida][numColumnaPinned] - 1;
+        cout << "Unpinned de la Pagina " << numPagina << endl;
     }
 }
 
@@ -408,8 +451,6 @@ string PageTable::analizarPageTableParaAgregarPagina(int numPagina) {
         bool eliminarPageConEscrituraEnDisco = true;
         cout << "Pagina ya encontrada " << endl;
 
-        
-
         int numFrame = this->getNumFrameDeUnaPagina(numPagina);
         this->matrizPageTableLRU[numFrame][numColumnaRefBit] = 1;
         cout << "  La manesilla no se mueve, apunta al frame " << clockHand << endl;
@@ -426,7 +467,7 @@ string PageTable::analizarPageTableParaAgregarPagina(int numPagina) {
             cout<<"Frames llenos"<<endl;
             int numPaginaEliminada = INT16_MAX;
             
-            aplicarClockConCondicionPinCount(numPagina, INT16_MAX, eliminarPageSinEscrituraEnDisco, eliminarPageConEscrituraEnDisco, numPaginaEliminada);
+            aplicarClockConCondicionPinned(numPagina, INT16_MAX, eliminarPageSinEscrituraEnDisco, eliminarPageConEscrituraEnDisco, numPaginaEliminada);
             
             if (eliminarPageSinEscrituraEnDisco == true && eliminarPageConEscrituraEnDisco == false) {
                 string primerBool = "eliminarPageSinEscrituraEnDisco";

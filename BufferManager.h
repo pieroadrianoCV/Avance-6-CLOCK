@@ -23,6 +23,7 @@ class BufferManager {
         void mostrarUnaPagina(int numPagina);
         void mostrarPageTAble();
         void dejarDeUsarUnaPagina(int numPagina);
+        void liberarPinnedPagina(int numPagina);
 };
 
 #endif
