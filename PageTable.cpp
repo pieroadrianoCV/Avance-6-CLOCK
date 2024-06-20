@@ -19,6 +19,28 @@ void PageTable::mostrarPageTableLRU() {
     }
 }
 
+
+bool PageTable::verificarDirtyPagina(int numPagina)
+{
+    int numFilaElegida;
+    if (this->verificarExistenciaDePagina(numPagina) == true) {
+        int j = 0;
+        for (int i = 0; i < this->columnaFrameIdSize; i++) {
+            if (this->matrizPageTableLRU[i][j] == numPagina) {
+                numFilaElegida = i;
+                break; 
+            }
+        }
+        int numColumnaDirty = 1;
+
+        if (this->matrizPageTableLRU[numFilaElegida][numColumnaDirty] == 1) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+}
 bool PageTable::verificarExistenciaDePagina(int numPagina) {
     int j = 0;
     for (int i = 0; i < this->columnaFrameIdSize; i++) {
@@ -204,7 +226,7 @@ void PageTable::actualizarInfoDePageTableSolictandoNuevaPagina(int numPaginaActu
             }
         }
         else if (j == 2) {
-            this->aumentarPinCountDePagina(numPaginaActualizar);
+            //this->aumentarPinCountDePagina(numPaginaActualizar);
             cout << "Frame Id: " << numFilaFrameId << endl;
             cout << "Pin Count establecido." << endl;
         }
@@ -557,7 +579,7 @@ void PageTable::actualizarInformacionDePaginaEliminada(int numPaginaEliminar, in
             cout << "Dirty Bit = 0." << endl;
         }
         else if (j == 2) {
-            this->aumentarPinCountDePagina(nuevaPaginaIngresar);
+            //this->aumentarPinCountDePagina(nuevaPaginaIngresar);
             cout << "Frame Id: " << numFilaElegida << endl;
             cout << "Pin Count establecido: " << nuevaPaginaIngresar << endl;
         }

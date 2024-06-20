@@ -24,6 +24,7 @@ class BufferManager {
         void mostrarPageTAble();
         void dejarDeUsarUnaPagina(int numPagina);
         void liberarPinnedPagina(int numPagina);
+        void verificarDirtyPagina(int numPagina);
 };
 
 #endif

@@ -146,7 +146,7 @@ bool Pagina::verificarPaginaVacia() {
 }
 
 void Pagina::agregarContenido(int numPaginaEliminada) {
-    string rutaBloqueEscribir = "../Bloques/Bloque"+ to_string(numPaginaEliminada) + ".txt";
+    string rutaBloqueEscribir = "./Bloques/Bloque"+ to_string(numPaginaEliminada) + ".txt";
     ofstream rutaBloque(rutaBloqueEscribir, ios::trunc);
     if (!rutaBloque.is_open()) {
         cout<<"No abrio correctamente: "<<rutaBloqueEscribir<<endl;

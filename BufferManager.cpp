@@ -24,6 +24,9 @@ void BufferManager::crearBufferPoolSegunNumFrames(int numFrames) {
         }
     }
 }
+void BufferManager::verificarDirtyPagina(int numPagina) {
+    this->pageTable.verificarDirtyPagina(numPagina);
+}
 
 void BufferManager::establecerLimiteDeFrames(int pesoBytesBLoque) {
     this->bufferPool.capacidadDeCadaFrame = pesoBytesBLoque;

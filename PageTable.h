@@ -52,6 +52,7 @@ class PageTable{
         string analizarPageTableParaAgregarPagina(int numPagina);
         bool verificarFrameLlenos();
         void actualizarInformacionDePaginaEliminada(int numPaginaActualizar, int nuevaPaginaActualizar);
+        bool verificarDirtyPagina(int numPagina);
 };
 
 #endif
