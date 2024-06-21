@@ -277,9 +277,10 @@ void menu() {
                 else if (accionPagina == 'W' || accionPagina == 'w') {
                     bufferManagerPrincipal.bufferPool.lecturaOescrituraPagina(numFrame); //escribir
                     bufferManagerPrincipal.pageTable.aumentarPinCountDePagina(numPagina);
-                    bufferManagerPrincipal.pageTable.cambiarDirtyBitDePagina(numPagina);
+                    
                     if (noEscrituraEnCola(numPagina) == true)
                     {
+                        bufferManagerPrincipal.pageTable.cambiarDirtyBitDePagina(numPagina);
                         Requerimiento req = {numPagina, accionPagina};
                         colaDeRequerimientos.push(req);
                         break;
