@@ -9,7 +9,7 @@ struct Requerimiento {
 };
 
 queue<Requerimiento> colaDeRequerimientos;
-queue<Requerimiento> colaDeEspera;
+//queue<Requerimiento> colaDeEspera;
 
 /* Funcion para ver REQUERIMIENTOS incial*/
 
@@ -94,6 +94,18 @@ void procesarColaEscritura(int paginaLiberar) {
         cout << "Cola original sin liberaciones:" << endl;
         visualizarCola();
     }
+}
+
+bool noEscrituraEnCola(int pagina) {
+    queue<Requerimiento> tempCola = colaDeRequerimientos;
+    while (!tempCola.empty()) {
+        Requerimiento req = tempCola.front();
+        tempCola.pop();
+        if (req.numPagina == pagina && (req.accion == 'W' || req.accion == 'w')) {
+            return false; 
+        }
+    }
+    return true; 
 }
 
 void procesarColaLectura(int paginaLiberar) {
@@ -215,9 +227,8 @@ void menu() {
                 cin >> accionPagina;
 
                 //bool requerimientoAgregado = false;
-
-                Requerimiento req = {numPagina, accionPagina};
-                colaDeRequerimientos.push(req);
+                
+                
                 cout << "Requerimiento agregado a la cola." << endl;
 
                 numFrame = bufferManagerPrincipal.pageTable.getNumFrameDeUnaPagina(numPagina);
@@ -227,6 +238,17 @@ void menu() {
                     if (bufferManagerPrincipal.pageTable.verificarDirtyPagina(numPagina) == false) {
                         bufferManagerPrincipal.bufferPool.mostrarFramePagina(numFrame);
                         bufferManagerPrincipal.pageTable.aumentarPinCountDePagina(numPagina);
+                        if (noEscrituraEnCola(numPagina) == true)
+                            {
+                                Requerimiento req = {numPagina, accionPagina};
+                                colaDeRequerimientos.push(req);
+                                break;
+                            }
+                            else
+                            {
+                                cout << "No se puede añadir a la cola este proceso de lectura, hay uno de escritura en cola" << endl;
+                                break;
+                            }
                     }
                     else {
                         cout << "Dirty Bit de la Pagina " << numPagina << " esta en 1." << endl;
@@ -236,7 +258,7 @@ void menu() {
                         cin >> opcionPaginaGuardado;
 
                         if (opcionPaginaGuardado == 0) {
-                            cout << "Requerimiento a cola de espera." << endl;
+                            cout << "No se guardo el archivo " << endl;
                             //Requerimiento colaEspera = {numPagina, accionPagina};
                             //colaDeEspera.push(colaEspera);
                             //requerimientoAgregado = true;
@@ -245,6 +267,9 @@ void menu() {
                             bufferManagerPrincipal.pageTable.cambiarDirtyBitDePagina(numPagina);
                             bufferManagerPrincipal.bufferPool.agregarContenidoPaginaAbloque(numFrame, numPagina);
                             bufferManagerPrincipal.pageTable.aumentarPinCountDePagina(numPagina);
+                            Requerimiento req = {numPagina, accionPagina};
+                            colaDeRequerimientos.push(req);
+                                
                         }
                     }
                     break;
@@ -253,6 +278,17 @@ void menu() {
                     bufferManagerPrincipal.bufferPool.lecturaOescrituraPagina(numFrame); //escribir
                     bufferManagerPrincipal.pageTable.aumentarPinCountDePagina(numPagina);
                     bufferManagerPrincipal.pageTable.cambiarDirtyBitDePagina(numPagina);
+                    if (noEscrituraEnCola(numPagina) == true)
+                    {
+                        Requerimiento req = {numPagina, accionPagina};
+                        colaDeRequerimientos.push(req);
+                        break;
+                    }
+                    else
+                    {
+                        cout << "No se puede añadir a la cola este proceso de escritura, ya existe uno en espera" << endl;
+                        break;
+                    }
                     break;
                 }
 
